@@ -1,0 +1,18 @@
+.button_add {
+  margin: 0;
+  padding: 0;
+  height: 50px;
+  width: 150px;
+  display: flex;
+  align-self: center;
+  background-image: url(../../../images/JoJo.png);
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+@media screen and (max-width: 767px) {
+  .button_add {
+    margin-top: 36px;
+    width: 282px;
+  }
+}

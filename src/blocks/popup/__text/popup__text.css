@@ -1,0 +1,12 @@
+.popup__text {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  bottom: -22px;
+  left: 0;
+  z-index: 2;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 15px;
+  color: #FFFFFF;
+}

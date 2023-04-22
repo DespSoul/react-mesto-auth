@@ -1,0 +1,12 @@
+.profile__text {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 0 18px;
+}
+
+@media screen and (max-width: 767px) {
+  .profile__text {
+    gap: 0 10px;
+  }
+}

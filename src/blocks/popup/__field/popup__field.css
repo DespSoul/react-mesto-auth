@@ -1,0 +1,14 @@
+.popup__field{
+  margin: 0 0 30px;
+  padding: 0;
+  width: 358px;
+  position: relative;
+  display: flex;
+}
+
+@media screen and (max-width: 767px){
+  .popup__field{
+    width: 238px;
+  }
+  
+}
