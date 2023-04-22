@@ -52,3 +52,9 @@
 @import url(../blocks/popup/__span/popup__span.css);
 @import url(../blocks/popup/__field/popup__field.css);
 @import url(../blocks/popup/__button/_disabled/popup__button_disabled.css);
+
+@import url(../blocks/sign/sign.css);
+@import url(../blocks/sign/__button/sign__button.css);
+@import url(../blocks/sign/__form/sign__form.css);
+@import url(../blocks/sign/__input/sign__input.css);
+@import url(../blocks/sign/__text/sign__text.css);

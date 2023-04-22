@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Route, Routes } from "react-router-dom";
 import "../pages/index.css";
 import api from "../utils/Api";
 import Footer from "./Footer.js";
@@ -11,6 +12,9 @@ import ArrayCardsContext from "../contexts/ArrayCardsContext";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
+import Login from "./Login";
+import Register from "./Register";
+import ProtectedRouteElement from "./ProtectedRouteElement";
 
 function App() {
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] = useState(false);
@@ -20,6 +24,7 @@ function App() {
     name: "",
     link: "",
   });
+  const [loggedIn, setLoggedIn] = useState(false);
 
   const [currentUser, setCurrentUser] = useState([]);
   const [arrayCards, setArrayCards] = useState([]);
@@ -111,14 +116,27 @@ function App() {
       <ArrayCardsContext.Provider value={arrayCards}>
         <Header />
 
-        <Main
-          onEditAvatar={handleEditAvatarClick}
-          onEditProfile={handleEditProfileClick}
-          onAddPlace={handleAddPlaceClick}
-          onCardClick={handleCardClick}
-          onCardLike={handleCardLike}
-          onCardDelete={handleCardDelete}
-        />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <ProtectedRouteElement
+              loggedIn={loggedIn}
+              element={Main}
+              onEditAvatar={handleEditAvatarClick}
+              onEditProfile={handleEditProfileClick}
+              onAddPlace={handleAddPlaceClick}
+              onCardClick={handleCardClick}
+              onCardLike={handleCardLike}
+              onCardDelete={handleCardDelete}
+            />
+            }
+          />
+
+          <Route path="/sing-in" element={<Login />}/>
+
+          <Route path="/sing-up" element={<Register />}/>
+        </Routes>
 
         <Footer />
 
