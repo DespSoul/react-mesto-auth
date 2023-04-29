@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import "../pages/index.css";
 import api from "../utils/Api";
 import Footer from "./Footer.js";
@@ -173,6 +173,7 @@ function App() {
             path="/sign-up"
             element={<Register onInfoTooltip={setInfoTooltip} />}
           />
+          <Route path="*" element={<Navigate to='/' replace />} />
         </Routes>
 
         <Footer />
