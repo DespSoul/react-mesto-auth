@@ -4,8 +4,8 @@ export function ProtectedRouteElement({ element: Component, ...props }) {
   return props.loggedIn ? (
     <Component {...props} />
   ) : (
-    <Navigate to="/sing-in" replace />
+    <Navigate to="/sing-up" replace />
   );
 }
 
-export default ProtectedRouteElement
+export default ProtectedRouteElement;

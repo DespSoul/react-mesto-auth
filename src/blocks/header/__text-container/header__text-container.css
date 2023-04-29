@@ -1,0 +1,6 @@
+.header__text-container{
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 0 24px;
+}

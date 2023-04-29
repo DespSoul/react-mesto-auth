@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import "../pages/index.css";
 import api from "../utils/Api";
 import Footer from "./Footer.js";
@@ -15,11 +15,18 @@ import AddPlacePopup from "./AddPlacePopup";
 import Login from "./Login";
 import Register from "./Register";
 import ProtectedRouteElement from "./ProtectedRouteElement";
+import InfoTooltip from "./InfoTooltip";
+import { getConfirmationValidation } from "../utils/Auth";
 
 function App() {
+  const navigate = useNavigate();
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = useState(false);
+  const [isInfoTooltip, setInfoTooltip] = useState({
+    isOpened: false,
+    res: false,
+  });
   const [selectedCard, setSelectedCard] = useState({
     name: "",
     link: "",
@@ -28,6 +35,7 @@ function App() {
 
   const [currentUser, setCurrentUser] = useState([]);
   const [arrayCards, setArrayCards] = useState([]);
+  const [profileUser, setProfileUser] = useState([]);
 
   useEffect(() => {
     Promise.all([api.getInitialCards(), api.getUsers()]).then(
@@ -37,6 +45,10 @@ function App() {
       }
     );
   }, []);
+
+  function handleLoggedIn() {
+    setLoggedIn(true);
+  }
 
   function handleEditAvatarClick() {
     setEditAvatarPopupOpen(true);
@@ -58,8 +70,24 @@ function App() {
     setEditProfilePopupOpen(false);
     setAddPlacePopupOpen(false);
     setEditAvatarPopupOpen(false);
+    setInfoTooltip(false);
     setSelectedCard({ name: "", link: "" });
   }
+
+  function checkToken() {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      getConfirmationValidation(token).then((res) => {
+        setProfileUser({ ...res.data });
+      });
+      handleLoggedIn();
+      navigate("/", { replace: true });
+    }
+  }
+
+  useEffect(() => {
+    checkToken();
+  }, []);
 
   function handleCardLike(card) {
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
@@ -114,33 +142,48 @@ function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <ArrayCardsContext.Provider value={arrayCards}>
-        <Header />
+        <Header
+          loggedIn={{loggedIn, setLoggedIn}}
+          userInfo={{ profileUser, setProfileUser }}
+        />
 
         <Routes>
           <Route
             path="/"
             element={
               <ProtectedRouteElement
-              loggedIn={loggedIn}
-              element={Main}
-              onEditAvatar={handleEditAvatarClick}
-              onEditProfile={handleEditProfileClick}
-              onAddPlace={handleAddPlaceClick}
-              onCardClick={handleCardClick}
-              onCardLike={handleCardLike}
-              onCardDelete={handleCardDelete}
-            />
+                loggedIn={loggedIn}
+                element={Main}
+                onEditAvatar={handleEditAvatarClick}
+                onEditProfile={handleEditProfileClick}
+                onAddPlace={handleAddPlaceClick}
+                onCardClick={handleCardClick}
+                onCardLike={handleCardLike}
+                onCardDelete={handleCardDelete}
+              />
             }
           />
 
-          <Route path="/sing-in" element={<Login />}/>
+          <Route
+            path="/sign-in"
+            element={<Login loggedIn={checkToken} />}
+          />
 
-          <Route path="/sing-up" element={<Register />}/>
+          <Route
+            path="/sign-up"
+            element={<Register onInfoTooltip={setInfoTooltip} />}
+          />
         </Routes>
 
         <Footer />
 
         <ImagePopup card={selectedCard} onClose={closePopup} />
+
+        <InfoTooltip
+          isOpen={isInfoTooltip}
+          isClose={closePopup}
+          title={"Вы успешно зарегистрировались!"}
+        />
 
         <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
