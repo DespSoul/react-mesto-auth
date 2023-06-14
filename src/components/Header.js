@@ -1,23 +1,18 @@
-import { Route, Routes, useNavigate, Link } from "react-router-dom";
+import { Route, Routes, Link } from "react-router-dom";
 
-function Header(props) {  
-  const navigate = useNavigate();
-
-  function handleButtonExit() {
-    navigate("/sign-in", { replace: true });
-    localStorage.removeItem("jwt");
-    props.userInfo.setProfileUser({});
-    props.loggedIn.setLoggedIn(false)
-  }
+function Header(props) {
+  console.log(props)
   return (
     <header className="header">
       <div className="header__logo"></div>
       <div className="header__text-container">
-        {props.loggedIn.loggedIn && (
+        {props.loggedIn && (
           <p className="header__text">{props.userInfo.profileUser.email}</p>
         )}
-        {props.loggedIn.loggedIn ? (
-          <h2 className="header__text" onClick={handleButtonExit}>Выйти</h2>
+        {props.loggedIn ? (
+          <h2 className="header__text" onClick={props.onSignOut}>
+            Выйти
+          </h2>
         ) : (
           <Routes>
             <Route

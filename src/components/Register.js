@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import {register} from "../utils/Auth";
 
 export function Register(props) {
   const [formValue, setFormValue] = useState({
@@ -20,18 +19,7 @@ export function Register(props) {
   function handleSubmitForm(e) {
     e.preventDefault();
     const { userPassword, email } = formValue;
-    register(userPassword, email)
-      .then((res) => {
-        if (res.ok) {
-          setFormValue({ userPassword: "", email: "" });
-          props.onInfoTooltip({ isOpened: true, res: true });
-        } else {
-          props.onInfoTooltip({ isOpened: true, res: false });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    props.onRegister(userPassword, email);
   }
 
   return (
@@ -45,7 +33,7 @@ export function Register(props) {
           value={formValue.email}
           onChange={handleChangeForm}
           placeholder="Email"
-          maxLength='35'
+          maxLength="35"
           required
         />
         <input
@@ -55,8 +43,8 @@ export function Register(props) {
           value={formValue.userPassword}
           onChange={handleChangeForm}
           placeholder="Пароль"
-          maxLength='15'
-          minLength='3'
+          maxLength="15"
+          minLength="3"
           required
         />
         <button className="sign__button" type="submit">

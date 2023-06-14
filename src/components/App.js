@@ -17,6 +17,7 @@ import Register from "./Register";
 import ProtectedRouteElement from "./ProtectedRouteElement";
 import InfoTooltip from "./InfoTooltip";
 import { getConfirmationValidation } from "../utils/Auth";
+import { authorize, register } from "../utils/Auth";
 
 function App() {
   const navigate = useNavigate();
@@ -33,18 +34,9 @@ function App() {
   });
   const [loggedIn, setLoggedIn] = useState(false);
 
-  const [currentUser, setCurrentUser] = useState([]);
+  const [currentUser, setCurrentUser] = useState({});
   const [arrayCards, setArrayCards] = useState([]);
-  const [profileUser, setProfileUser] = useState([]);
-
-  useEffect(() => {
-    Promise.all([api.getInitialCards(), api.getUsers()]).then(
-      ([cards, user]) => {
-        setArrayCards(cards);
-        setCurrentUser(user);
-      }
-    );
-  }, []);
+  const [profileUser, setProfileUser] = useState({});
 
   function handleLoggedIn() {
     setLoggedIn(true);
@@ -77,9 +69,13 @@ function App() {
   function checkToken() {
     const token = localStorage.getItem("jwt");
     if (token) {
-      getConfirmationValidation(token).then((res) => {
-        setProfileUser({ ...res.data });
-      });
+      getConfirmationValidation(token)
+        .then((res) => {
+          setProfileUser({ ...res.data });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
       handleLoggedIn();
       navigate("/", { replace: true });
     }
@@ -87,7 +83,19 @@ function App() {
 
   useEffect(() => {
     checkToken();
-  }, []);
+    
+  }, [loggedIn]);
+
+  useEffect(() => {
+    if (loggedIn) {
+      Promise.all([api.getInitialCards(), api.getUsers()]).then(
+        ([cards, user]) => {
+          setArrayCards(cards);
+          setCurrentUser(user);
+        }
+      );
+    }
+  }, [loggedIn]);
 
   function handleCardLike(card) {
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
@@ -139,12 +147,49 @@ function App() {
       .catch((err) => console.log(err));
   }
 
+  function handleButtonExit() {
+    navigate("/sign-in", { replace: true });
+    localStorage.removeItem("jwt");
+    setProfileUser({});
+    setLoggedIn(false);
+  }
+
+  function handleLogin(userPassword, email) {
+    authorize(userPassword, email)
+      .then((data) => {
+        console.log(userPassword, email);
+        if (data) {
+          setLoggedIn(true);
+          navigate("/", { replace: true });
+          localStorage.setItem("jwt", data.token);
+          console.log(data);
+        }
+      })
+      .catch((err) => {
+        setInfoTooltip({
+          isOpened: true,
+          res: false,
+        });
+      });
+  }
+
+  function handleRegister(userPassword, email) {
+    register(userPassword, email)
+      .then((res) => {
+        setInfoTooltip({ isOpened: true, res: true });
+      })
+      .catch((err) => {
+        setInfoTooltip({ isOpened: true, res: false });
+      });
+  }
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <ArrayCardsContext.Provider value={arrayCards}>
         <Header
-          loggedIn={{loggedIn, setLoggedIn}}
+          loggedIn={loggedIn}
           userInfo={{ profileUser, setProfileUser }}
+          onSignOut={handleButtonExit}
         />
 
         <Routes>
@@ -166,14 +211,19 @@ function App() {
 
           <Route
             path="/sign-in"
-            element={<Login loggedIn={checkToken} />}
+            element={<Login loggedIn={checkToken} onLogin={handleLogin} />}
           />
 
           <Route
             path="/sign-up"
-            element={<Register onInfoTooltip={setInfoTooltip} />}
+            element={
+              <Register
+                onInfoTooltip={setInfoTooltip}
+                onRegister={handleRegister}
+              />
+            }
           />
-          <Route path="*" element={<Navigate to='/' replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
 
         <Footer />

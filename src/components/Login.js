@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { authorize } from "../utils/Auth";
-import { useNavigate } from "react-router-dom";
 
 export function Login(props) {
   const [formValue, setFormValue] = useState({
@@ -17,21 +15,10 @@ export function Login(props) {
     });
   }
 
-
   function handleSubmitForm(e) {
     e.preventDefault();
     const { userPassword, email } = formValue;
-    authorize(userPassword, email)
-      .then((data) => {
-        if (data) {
-          props.loggedIn();
-          localStorage.setItem("jwt", data.token);
-        }
-        setFormValue({ userPassword: "", email: "" });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    props.onLogin(userPassword, email);
   }
   return (
     <div className="sign">
