@@ -157,12 +157,10 @@ function App() {
   function handleLogin(userPassword, email) {
     authorize(userPassword, email)
       .then((data) => {
-        console.log(userPassword, email);
         if (data) {
           setLoggedIn(true);
           navigate("/", { replace: true });
           localStorage.setItem("jwt", data.token);
-          console.log(data);
         }
       })
       .catch((err) => {
