@@ -83,7 +83,6 @@ function App() {
 
   useEffect(() => {
     checkToken();
-    
   }, [loggedIn]);
 
   useEffect(() => {
@@ -175,6 +174,7 @@ function App() {
     register(userPassword, email)
       .then((res) => {
         setInfoTooltip({ isOpened: true, res: true });
+        navigate("/sign-in", { replace: true });
       })
       .catch((err) => {
         setInfoTooltip({ isOpened: true, res: false });

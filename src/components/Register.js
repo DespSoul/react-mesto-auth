@@ -53,7 +53,7 @@ export function Register(props) {
       </form>
       <h3 className="sing__subtitle">
         Уже зарегистрированы?{" "}
-        <Link className="link" to="/sing-in">
+        <Link className="link" to="/sign-in">
           Войти
         </Link>
       </h3>
